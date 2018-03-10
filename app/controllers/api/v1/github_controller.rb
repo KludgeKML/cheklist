@@ -7,7 +7,7 @@ module Api
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
         if request.headers['X-GitHub-Event'] == 'pull_request'
-          validator = VersionValidator.new(params[:pull_request][:repo][:full_name], params[:number])
+          validator = VersionValidator.new(params[:repository][:full_name], params[:number])
           validator.validate()
         end
 
