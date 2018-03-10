@@ -3,6 +3,9 @@ module Api
   module V1
     class Api::V1::GithubController < ApiController
       def hook
+        Rails.info.log("Event: #{request.headers['X-GitHub-Event']}")
+        Rails.info.log("Action: #{params[:action]}")
+
         if (request.headers['X-GitHub-Event'] == 'pull_request') && ['opened', 'edited', 'reopened'].include?(params[:action])
           validator = VersionValidator.new(params[:pull_request][:repo][:full_name], params[:number])
           validator.validate()
