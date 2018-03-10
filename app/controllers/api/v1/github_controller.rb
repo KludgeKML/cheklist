@@ -6,7 +6,7 @@ module Api
         Rails.logger.info("Event: #{request.headers['X-GitHub-Event']}")
         Rails.logger.info("Action: #{params[:action]}")
 
-        if (request.headers['X-GitHub-Event'] == 'pull_request') && ['opened', 'edited', 'reopened'].include?(params[:action])
+        if request.headers['X-GitHub-Event'] == 'pull_request'
           validator = VersionValidator.new(params[:pull_request][:repo][:full_name], params[:number])
           validator.validate()
         end
