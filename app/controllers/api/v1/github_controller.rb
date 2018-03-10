@@ -7,8 +7,8 @@ module Api
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
         if request.headers['X-GitHub-Event'] == 'pull_request'
-          validator = VersionValidator.new(params[:repository][:full_name], params[:number])
-          validator.validate()
+          validator = VersionValidator.new()
+          validator.validate(params[:repository][:full_name], params[:number])
         end
 
         render json: { accepted: 'true' }, status: :ok
