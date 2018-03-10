@@ -23,6 +23,7 @@ class VersionValidator
   end
 
   def success(repo, commit)
+  	Rails.logger.info('')
   	@client.create_status(repo, commit, 'success', context: 'chekblok', description: 'VERSION file updated')
   end
 
