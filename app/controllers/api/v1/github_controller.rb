@@ -3,12 +3,11 @@ module Api
   module V1
     class Api::V1::GithubController < ApiController
       def hook
-        Rails.logger.info("Event-type: #{request.headers['X-GitHub-Event']}")
-        
-        params.each do |k, v|
-          Rails.logger.info("Param[#{k}] : #{v}")
+        if (request.headers['X-GitHub-Event'] == 'pull_request') && ['opened', 'edited', 'reopened'].include?(params[:action])
+          validator = VersionValidator.new(params[:pull_request][:repo][:full_name], params[:number])
+          validator.validate()
         end
-        
+
         render json: { accepted: 'true' }, status: :ok
       end
     end

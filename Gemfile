@@ -45,6 +45,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Allow sqlite3 as the database for Active Record in dev/test envs
   gem 'sqlite3'
+  gem 'dotenv-rails'
 end
 
 group :development do
