@@ -2,7 +2,7 @@
 module Api
   module V1
     class Api::V1::GithubController < ApiController
-      def hook
+      def webhook
         Rails.logger.info("Event: #{request.headers['X-GitHub-Event']}")
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
