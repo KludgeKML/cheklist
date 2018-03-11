@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  description: MyString
+  target: MyString
+  action: MyString
+  repository: one
+
+two:
+  description: MyString
+  target: MyString
+  action: MyString
+  repository: two
