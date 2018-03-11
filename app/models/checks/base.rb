@@ -10,3 +10,5 @@ module Checks
 		end
 	end
 end
+
+require 'checks/file_changed'
