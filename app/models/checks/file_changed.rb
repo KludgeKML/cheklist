@@ -6,25 +6,24 @@ module Checks
 		end
 
 		def description_complex
-			"Has %{Filepath} been updated?"
+			"Has #{filepath} been updated?"
 		end
 
 		def variables
 			['filepath']
 		end
 
-		def passed?
-  			pr = @client.pull_request(repository, pull_request_id)
-  			files = @client.pull_request_files(repository, pull_request_id)
-  			passed = false
+		def passed?(pr_id: nil, commit_sha: nil)
+  		files = @client.pull_request_files(repository.name, pr_id)
 			files.each do |f|
-				passed = true if f.filename == filepath
+				return true if f.filename == filepath
 			end
-			commit = pr.head.sha			
+			false
 		end
 
 		def filepath
-			variables.where(name: 'filepath').value || 'README'
+			v = @check_record.variables.where(name: 'filepath').first
+			v ? v.value : 'README'
 		end
 	end
 end

@@ -3,15 +3,27 @@ module Api
   module V1
     class Api::V1::GithubController < ApiController
       def webhook
-        Rails.logger.info("Event: #{request.headers['X-GitHub-Event']}")
+        Rails.logger.info("Event: #{github_event}")
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
-        if request.headers['X-GitHub-Event'] == 'pull_request'
-          validator = VersionValidator.new()
-          validator.validate(params[:repository][:full_name], params[:number])
+        if trigger?
+          affected_repo = Repository.find_by(name: params[:repository][:full_name])
+          affected_repo.triggers.each do |trigger|
+            trigger.handle(:github, github_event, params)
+          end
         end
 
         render json: { accepted: 'true' }, status: :ok
+      end
+
+      private
+
+      def github_event
+        request.headers['X-GitHub-Event']
+      end
+
+      def trigger?
+        github_event == 'pull_request'
       end
     end
   end

@@ -64,11 +64,11 @@ group :test do
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
   gem 'rspec-rails'
+  gem 'webmock'
   gem 'simplecov'
   gem 'brakeman', require: false
   gem 'rubycritic', require: false
-  gem 'webmock'
-  
+
   gem 'ruby_audit'
   gem 'bundler-audit'
 end
