@@ -19,6 +19,7 @@ class ActionParamFixer
     [status, headers, resp]
   end
 
+  # Rack::Request subclass that supports copying params to new names
   class ActionParamFixerRequest < Rack::Request
     def copy_param(from:, to:)
       return unless params[from]
