@@ -13,11 +13,16 @@ class ActionParamFixer
   end
 
   def call(env)
-    request = Rack::Request.new(env)
-    if request.params['action']
-      request.update_param('webhook_action', request.params['action'])
-    end
+    request = ActionParamFixerRequest.new(env)
+    request.copy_param(from: 'action', to: 'webhook_action')
     status, headers, resp = @app.call(env)
     [status, headers, resp]
+  end
+
+  class ActionParamFixerRequest < Rack::Request
+    def copy_param(from:, to:)
+      return unless params[from]
+      update_param(to, params[from])
+    end
   end
 end

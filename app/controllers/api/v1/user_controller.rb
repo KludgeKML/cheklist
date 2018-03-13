@@ -1,7 +1,7 @@
 # Handles incoming  hooks from GitHub
 module Api
   module V1
-    class Api::V1::UserController < ApiController
+    class UserController < ApiController
       def index
         users = []
         User.all.each do |user|

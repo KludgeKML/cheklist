@@ -1,9 +1,8 @@
 # Handles incoming  hooks from GitHub
 module Api
   module V1
-    class Api::V1::GithubController < ApiController
+    class GithubController < ApiController
       def webhook
-        Rails.logger.info("Event: #{github_event}")
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
         if trigger?
