@@ -2,6 +2,7 @@
 module Api
   module V1
     class ApiController < ActionController::Base
+      protect_from_forgery
       skip_before_action :verify_authenticity_token
     end
   end
