@@ -209,6 +209,9 @@ GEM
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    rspec_junit_formatter (0.2.2)
+      builder (< 4)
+      rspec-core (>= 2, < 4, != 2.12.0)
     ruby_audit (1.2.0)
       bundler-audit (~> 0.6.0)
     ruby_dep (1.5.0)
@@ -312,6 +315,7 @@ DEPENDENCIES
   puma (~> 3.11)
   rails (~> 5.2.0.rc1)
   rspec-rails
+  rspec_junit_formatter (= 0.2.2)
   ruby_audit
   rubycritic
   sass-rails (~> 5.0)

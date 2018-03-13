@@ -36,10 +36,12 @@ jobs:
           name: run tests
           command: |
             mkdir coverage
-            mkdir /tmp/test-results
+            mkdir /tmp/test-results/
+            mkdir /tmp/test-results/rspec
             TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            
-            bundle exec rspec
+            bundle exec rspec --format RspecJunitFormatter \
+                              --out tmp/test-results/rspec/results.xml \
+                              --format progress           
  
       # run code quality tests
       - run:
@@ -57,9 +59,6 @@ jobs:
             bundle exec ruby-audit check      
 
       # collect reports
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
       - store_artifacts:
           path: tmp/brakeman_results.txt
           destination: brakeman_results.txt

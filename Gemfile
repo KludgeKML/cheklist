@@ -68,6 +68,7 @@ group :test do
   gem 'simplecov'
   gem 'brakeman', require: false
   gem 'rubycritic', require: false
+  gem 'rspec_junit_formatter', '0.2.2'
 
   gem 'ruby_audit'
   gem 'bundler-audit'
