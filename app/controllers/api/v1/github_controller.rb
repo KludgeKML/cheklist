@@ -2,7 +2,11 @@
 module Api
   module V1
     class GithubController < ApiController
+      include GithubPayloadVerification
+
+      before_action :verify_signature
       before_action :find_repository
+
 
       def webhook
         Rails.logger.info("Action: #{params[:webhook_action]}")

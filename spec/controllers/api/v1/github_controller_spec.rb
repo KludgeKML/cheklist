@@ -1,10 +1,47 @@
 require 'rails_helper'
 
 describe Api::V1::GithubController, type: :controller do
-  describe 'hook' do
+  before do
+    Rails.application.config.github_webhook_secret = 'test-secret'
+  end
+
+  describe '<signature verification>' do
+    context 'with no local secret' do
+      it 'fails' do
+        data = { action: 'blue', data: {}.to_json, id: 'what' }
+        headers_for_data(request, data, event_type: 'ping')
+        Rails.application.config.github_webhook_secret = nil
+        post(:webhook, params: data)
+        expect(response.status).to eq(401)
+      end
+    end
+
+    context 'with no remote signature' do
+      it 'fails' do
+        data = { action: 'blue', data: {}.to_json, id: 'what' }
+        headers_for_data(request, data, event_type: 'ping')
+        request.headers['HTTP_X_HUB_SIGNATURE'] = nil
+        post(:webhook, params: data)
+        expect(response.status).to eq(401)
+      end
+    end
+
+    context 'with mismatched secret' do
+      it 'fails' do
+        data = { action: 'blue', data: {}.to_json, id: 'what' }
+        headers_for_data(request, data, event_type: 'ping')
+        Rails.application.config.github_webhook_secret = 'wrong-secret'
+        post(:webhook, params: data)
+        expect(response.status).to eq(401)
+      end
+    end
+  end
+
+  describe '#hook' do
     it 'registers an anonymous pulse' do
-      request.headers['X-GitHub-Event'] = 'ping'
-      post(:webhook, params: { action: 'blue', data: {}.to_json, id: 'what' })
+      data = { action: 'blue', data: {}.to_json, id: 'what' }
+      headers_for_data(request, data, event_type: 'ping')
+      post(:webhook, params: data)
       expect(response.status).to eq(200)
     end
 
@@ -18,16 +55,18 @@ describe Api::V1::GithubController, type: :controller do
       end
 
       it 'returns not found for an unknown repo' do
-        request.headers['X-GitHub-Event'] = 'pull_request'
-        request.headers['Content-Type'] = 'application/json'
-        post(:webhook, params: { repository: { full_name: 'test/unknown' }, number: 1 })
+        data = { repository: { full_name: 'test/unknown' }, number: 1 }
+        headers_for_data(request, data, event_type: 'pull_request')
+
+        post(:webhook, params: data)
         expect(response.status).to eq(404)
       end
 
       it 'handles a known repo' do
-        request.headers['X-GitHub-Event'] = 'pull_request'
-        request.headers['Content-Type'] = 'application/json'
-        post(:webhook, params: { repository: { full_name: 'test/test' }, number: 1 })
+        data = { repository: { full_name: 'test/test' }, number: 2 }
+        headers_for_data(request, data, event_type: 'pull_request')
+
+        post(:webhook, params: data)
         expect(response.status).to eq(200)
       end
     end
