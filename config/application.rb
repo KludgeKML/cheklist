@@ -1,7 +1,5 @@
 require_relative 'boot'
-
 require 'rails/all'
-# require 'lib/action_param_fixer'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -17,7 +15,8 @@ module Cheklist
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-	# config.autoload_paths += Dir["#{config.root}/lib/**/"]
-	# config.middleware.use ActionParamFixer
+	config.autoload_paths += Dir["#{config.root}/lib/**/"]
+  require 'action_param_fixer'
+	config.middleware.use ActionParamFixer
   end
 end

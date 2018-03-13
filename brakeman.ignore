@@ -1,0 +1,26 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Weak Hash",
+      "warning_code": 90,
+      "fingerprint": "97de29cb7c5e99d5aa42c23f434a8aa5f20332e7a30b81f134e7c9952e7847c2",
+      "check_name": "WeakHash",
+      "message": "Weak hashing algorithm (SHA1) used",
+      "file": "app/controllers/concerns/github_payload_verification.rb",
+      "line": 9,
+      "link": "http://brakemanscanner.org/docs/warning_types/weak_hash/",
+      "code": "OpenSSL::Digest.new(\"sha1\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "GithubPayloadVerification",
+        "method": "verify_signature"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": "This is the hashing algorithm specified by GitHub, so until they update, we are forced to use it."
+    }
+  ],
+  "updated": "2018-03-13 16:15:57 +0000",
+  "brakeman_version": "4.0.1"
+}

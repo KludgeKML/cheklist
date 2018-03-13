@@ -1,0 +1,72 @@
+# Circle CI 2 file
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.5.0-node-browsers
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+        
+      # Database setup
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            mkdir coverage
+            mkdir tmp/test-results/
+            mkdir tmp/test-results/rspec
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec --format RspecJunitFormatter \
+                              --out tmp/test-results/rspec/results.xml \
+                              --format progress           
+ 
+      # run code quality tests
+      - run:
+          name: run code quality tests
+          command: |
+            bundle exec brakeman -z -A -i brakeman.ignore -o tmp/brakeman_results.txt --table-width=1000
+            bundle exec rubycritic app config lib
+    
+
+      # run audits
+      - run:
+          name: run audits
+          command: |
+            bundle exec bundle audit check
+            bundle exec ruby-audit check      
+
+      # collect reports
+      - store_artifacts:
+          path: tmp/brakeman_results.txt
+          destination: brakeman_results.txt
+      - store_artifacts:
+          path: tmp/rubycritic
+          destination: rubycritic
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+      - store_test_results:
+          path: tmp/test-results

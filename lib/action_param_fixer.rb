@@ -1,4 +1,4 @@
-# Some webhooks pass an action parameter which gets 
+# Some webhooks pass an action parameter which gets
 # overwritten by rails. This saves the param to another
 # parameter (webhook_action). To use, add:
 #
@@ -11,13 +11,19 @@ class ActionParamFixer
   def initialize(app)
     @app = app
   end
- 
+
   def call(env)
-    request = Rack::Request.new(env)
-    if request.params['action']
-      request.update_param('webhook_action', request.params['action'])
-    end
+    request = ActionParamFixerRequest.new(env)
+    request.copy_param(from: 'action', to: 'webhook_action')
     status, headers, resp = @app.call(env)
     [status, headers, resp]
+  end
+
+  # Rack::Request subclass that supports copying params to new names
+  class ActionParamFixerRequest < Rack::Request
+    def copy_param(from:, to:)
+      return unless params[from]
+      update_param(to, params[from])
+    end
   end
 end

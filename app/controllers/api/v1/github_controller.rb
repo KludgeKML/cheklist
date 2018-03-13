@@ -1,17 +1,43 @@
 # Handles incoming  hooks from GitHub
 module Api
   module V1
-    class Api::V1::GithubController < ApiController
+    class GithubController < ApiController
+      include GithubPayloadVerification
+
+      before_action :verify_signature
+      before_action :find_repository
+
+
       def webhook
-        Rails.logger.info("Event: #{request.headers['X-GitHub-Event']}")
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
-        if request.headers['X-GitHub-Event'] == 'pull_request'
-          validator = VersionValidator.new()
-          validator.validate(params[:repository][:full_name], params[:number])
+        if trigger?
+          repository.triggers.each do |trigger|
+            trigger.handle(github_event, params)
+          end
         end
 
         render json: { accepted: 'true' }, status: :ok
+      end
+
+      private
+
+      def repository
+        @repository
+      end
+
+      def find_repository
+        return unless params[:repository]
+        @repository = Repository.find_by(name: params[:repository][:full_name])
+        render(json: { not_found: params[:repository][:full_name] }, status: :not_found) unless @repository
+      end
+
+      def github_event
+        request.headers['X-GitHub-Event']
+      end
+
+      def trigger?
+        github_event == 'pull_request'
       end
     end
   end
