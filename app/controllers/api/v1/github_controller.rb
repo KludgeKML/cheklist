@@ -2,13 +2,13 @@
 module Api
   module V1
     class GithubController < ApiController
+      before_action :find_repository
+
       def webhook
         Rails.logger.info("Action: #{params[:webhook_action]}")
 
         if trigger?
-          affected_repo = Repository.find_by(name: params[:repository][:full_name])
-          return render(json: { not_found: params[:repository][:full_name] }, status: :not_found) unless affected_repo
-          affected_repo.triggers.each do |trigger|
+          repository.triggers.each do |trigger|
             trigger.handle(github_event, params)
           end
         end
@@ -17,6 +17,16 @@ module Api
       end
 
       private
+
+      def repository
+        @repository
+      end
+
+      def find_repository
+        return unless params[:repository]
+        @repository = Repository.find_by(name: params[:repository][:full_name])
+        render(json: { not_found: params[:repository][:full_name] }, status: :not_found) unless @repository
+      end
 
       def github_event
         request.headers['X-GitHub-Event']
