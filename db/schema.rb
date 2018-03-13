@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2018_03_11_105900) do
 
   create_table "variables", force: :cascade do |t|
     t.string "name"
-    t.string "variable"
+    t.string "value"
     t.integer "check_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

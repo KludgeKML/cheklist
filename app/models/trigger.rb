@@ -15,8 +15,4 @@ class Trigger < ApplicationRecord
       end
     end
   end
-
-  def client
-    Rails.application.config.github_api_client
-  end
 end

@@ -8,8 +8,9 @@ module Api
 
         if trigger?
           affected_repo = Repository.find_by(name: params[:repository][:full_name])
+          return render(json: { not_found: params[:repository][:full_name] }, status: :not_found) unless affected_repo
           affected_repo.triggers.each do |trigger|
-            trigger.handle(:github, github_event, params)
+            trigger.handle(github_event, params)
           end
         end
 

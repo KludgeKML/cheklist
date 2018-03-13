@@ -4,4 +4,6 @@ Rails.application.routes.draw do
       post 'github/webhook', to: 'github#webhook'
     end
   end
+
+  root to: 'homepage#index'
 end
