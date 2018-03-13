@@ -5,5 +5,5 @@
 <% if @display_name %>
   <p>You are logged in via GitHub as <%= display_name %>.</p>
 <% else %>
-  <p><%= link_to('Login via GitHub', '/auth/github') %></p>
+  <p><%= link_to('Login via GitHub', '/auth/github', data: { turbolinks: false }) %></p>
 <% end %>
