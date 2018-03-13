@@ -4,15 +4,6 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.5.0-node-browsers
-          POSTGRES_USER: ubuntu
-          RAILS_ENV: test
-          RACK_ENV: test
-          DATABASE_URL: "postgres://ubuntu@localhost:5432/db_name"
-      - image: circleci/postgres:9.6
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: db_name
-          POSTGRES_PASSWORD: ""
 
     working_directory: ~/repo
 
@@ -36,14 +27,10 @@ jobs:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
         
-      - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      # Database setup
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
 
-      - run:
-          name: Database setup
-          command: bundle exec rake db:schema:load --trace
-        
       # run tests!
       - run:
           name: run tests
