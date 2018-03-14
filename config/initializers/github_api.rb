@@ -1,7 +1,6 @@
 Rails.application.config.github_api_client = Octokit::Client.new(access_token: ENV['GITHUB_API_KEY'])
 Rails.application.config.github_app_id = ENV['GITHUB_APP_ID']
 
-
 def new_jwt_token
   private_key = OpenSSL::PKey::RSA.new(ENV['GITHUB_APP_PRIVATE_KEY'])
 
@@ -14,4 +13,6 @@ def new_jwt_token
   JWT.encode(payload, private_key, 'RS256')
 end
 
-Rails.application.config.github_jwt_client = Octokit::Client.new(bearer_token: new_jwt_token)
+if ENV['GITHUB_APP_PRIVATE_KEY']
+  Rails.application.config.github_jwt_client = Octokit::Client.new(bearer_token: new_jwt_token)
+end
