@@ -2,8 +2,16 @@
 
 <p>Welcome to ChekBlok</p>
 
-<% if @display_name %>
-  <p>You are logged in via GitHub as <%= @display_name %>.</p>
+<% if @current_user %>
+  <p>You are logged in via GitHub as <%= @current_user.display_name %>.</p>
+  <p>Your installed repositories (<%= link_to('refresh', root_path(refresh: true)) %>):
+    <ul>
+      <% @current_user.repositories.all.each do |repo| %>
+      <li><%= repo.name %></li>
+      <% end %>
+    </ul>
+  </p>
+  <p>To install ChekBlok on other repositories, please visit the <%= link_to('configuration page on GitHub', "https://github.com/settings/installations/#{@install_id}") %></p>
 <% else %>
   <p><%= link_to('Login via GitHub', '/auth/github', data: { turbolinks: false }) %></p>
 <% end %>
