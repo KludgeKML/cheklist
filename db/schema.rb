@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 2018_03_11_105900) do
 
   create_table "users", force: :cascade do |t|
     t.string "display_name"
+    t.string "access_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

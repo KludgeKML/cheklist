@@ -6,5 +6,8 @@ Rails.application.routes.draw do
     end
   end
 
+  # omniauth callback for GitHub user authentication
+  get '/auth/:provider/callback', to: 'session#create'
+
   root to: 'homepage#index'
 end
